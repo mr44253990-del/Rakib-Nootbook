@@ -27,6 +27,13 @@ class AppViewModel(private val repository: NoteRepository) : ViewModel() {
     private val _aiLoading = MutableStateFlow(false)
     val aiLoading: StateFlow<Boolean> = _aiLoading.asStateFlow()
 
+    private val _selectedModel = MutableStateFlow("gemini-3.5-flash")
+    val selectedModel: StateFlow<String> = _selectedModel.asStateFlow()
+
+    fun selectModel(modelName: String) {
+        _selectedModel.value = modelName
+    }
+
     fun addNote(note: Note) {
         viewModelScope.launch {
             repository.insert(note)
@@ -55,7 +62,7 @@ class AppViewModel(private val repository: NoteRepository) : ViewModel() {
                     contents = listOf(Content(parts = listOf(Part(text = "Please summarize the following text:\n\n$content")))),
                     systemInstruction = Content(parts = listOf(Part(text = "You are a helpful assistant that summarizes text concisely in the original language.")))
                 )
-                val response = RetrofitClient.service.generateContent(apiKey, request)
+                val response = RetrofitClient.service.generateContent(_selectedModel.value, apiKey, request)
                 val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
                 if (text != null) onResult(text)
             } catch (e: Exception) {
@@ -76,7 +83,7 @@ class AppViewModel(private val repository: NoteRepository) : ViewModel() {
                     contents = listOf(Content(parts = listOf(Part(text = "Generate a short, catchy title (maximum 6 words) for the following text:\n\n$content")))),
                     systemInstruction = Content(parts = listOf(Part(text = "You are a helpful assistant that generates extremely short titles. Do not use quotes in the final title.")))
                 )
-                val response = RetrofitClient.service.generateContent(apiKey, request)
+                val response = RetrofitClient.service.generateContent(_selectedModel.value, apiKey, request)
                 val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
                 if (text != null) onResult(text.replace("\"", "").trim())
             } catch (e: Exception) {
@@ -97,7 +104,7 @@ class AppViewModel(private val repository: NoteRepository) : ViewModel() {
                     contents = listOf(Content(parts = listOf(Part(text = "Fix grammar and rewrite the following text professionally:\n\n$content")))),
                     systemInstruction = Content(parts = listOf(Part(text = "You are a professional editor. Only output the rewritten text. Keep the same language.")))
                 )
-                val response = RetrofitClient.service.generateContent(apiKey, request)
+                val response = RetrofitClient.service.generateContent(_selectedModel.value, apiKey, request)
                 val text = response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
                 if (text != null) onResult(text)
             } catch (e: Exception) {
