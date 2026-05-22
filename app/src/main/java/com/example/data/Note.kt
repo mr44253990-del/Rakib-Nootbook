@@ -9,5 +9,7 @@ data class Note(
     val title: String,
     val content: String,
     val color: Int, // Color as ARGB Int
+    val tag: String = "",
+    val isPrivate: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()
 )

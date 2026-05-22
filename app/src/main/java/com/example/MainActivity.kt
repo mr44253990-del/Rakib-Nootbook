@@ -34,7 +34,7 @@ class MainActivity : FragmentActivity() {
         applicationContext,
         AppDatabase::class.java,
         "rakib_notes.db"
-    ).build()
+    ).fallbackToDestructiveMigration().build()
     
     val repository = NoteRepository(database.noteDao())
     val factory = AppViewModelFactory(repository)
