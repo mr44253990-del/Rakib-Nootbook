@@ -1,0 +1,6 @@
+{
+  "name": "Rakib Note",
+  "description": "A smart notebook app that remembers, organizes, and protects everything automatically.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
